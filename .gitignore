@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+*.bz2
 ssh-portgen
 
 # Test binary, built with `go test -c`
