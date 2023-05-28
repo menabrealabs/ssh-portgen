@@ -19,7 +19,7 @@ const (
 // String is the method to format the flag's value, part of the flag.Value interface.
 // The String method's output will be used in diagnostics.
 func (b *digestIndex) String() string {
-	return fmt.Sprint(*b)
+	return fmt.Sprintf("%d/%d", b[0], b[1])
 }
 
 // Set is the method to set the flag value, part of the flag.Value interface.
