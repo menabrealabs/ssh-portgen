@@ -1,66 +1,41 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/binary"
-	"errors"
+	"flag"
 	"fmt"
 	"log"
-	"os"
 )
 
-const (
-	idxTopByte    = 20 // index of the digest byte array for the top value.
-	idxBottomByte = 2  // index of the digest byte array for the bottom value.
-)
+var indicesFlag = digestIndex{2, 20}
+var rawFlag bool
+
+func init() {
+	flag.Var(&indicesFlag, "indices", "index of two bytes from the digest in the range 0..31, separated by a forward-slash: e.g. 2/20")
+	flag.Var(&indicesFlag, "i", "shorthand for -indices flag")
+	flag.BoolVar(&rawFlag, "raw", false, "raw output: set to true to print only the raw generated port number")
+	flag.BoolVar(&rawFlag, "r", false, "shorthand for -raw flag")
+}
 
 func main() {
-	hostname, err := getHostname()
-	if err != nil {
-		log.Fatalf("Cannot read hostname: \n%s\n", usage())
-	}
+
+	flag.Parse()
+
+	hostname, _ := getHostname(flag.Arg(0))
 
 	digest, err := getDigest(hostname)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	port := getPort(digest)
-
-	// TODO: Check whether the port number is bound on current host
+	port := getPort(digest, indicesFlag)
 
 	// Print the output
-	fmt.Printf("Hostname: %s\n", hostname)
-	fmt.Printf("SHA2 Digest: %x\n", digest)
-	fmt.Printf("SSH port number: %d\n", port)
-}
-
-func usage() string {
-	return "Usage: ssh-portgen [hostname]"
-}
-
-// Get the hostname from the command line or from the environment.
-func getHostname() (string, error) {
-	if len(os.Args) > 1 {
-		return os.Args[1], nil
+	if rawFlag {
+		fmt.Print(port)
 	} else {
-		return os.Hostname()
+		fmt.Printf("Hostname: %s\n", hostname)
+		fmt.Printf("SHA2 Digest: %x\n", digest)
+		fmt.Printf("SSH port number: %d\n", port)
 	}
-}
 
-// Get a Sha256 digest of the hostname.
-func getDigest(hostname string) ([]byte, error) {
-	b := sha256.New()
-	_, err := b.Write([]byte(hostname))
-	if err != nil {
-		return nil, errors.New("Cannot generate SHA-256 digest")
-	}
-	return b.Sum(nil), nil
-}
-
-// Convert digest bytes into unsigned int and remove last digit.
-func getPort(digest []byte) uint16 {
-	digestBytes := []byte{digest[idxBottomByte], digest[idxTopByte]}
-	port := binary.LittleEndian.Uint16(digestBytes) / 10
-	return port
 }

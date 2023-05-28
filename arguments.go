@@ -7,19 +7,24 @@ import (
 	"strings"
 )
 
-type digestIndices [2]uint8
+type digestIndex [2]uint8
 
-const numBytes = 256 / 8
+const (
+	byteSize   = 8
+	digestSize = 256
+	numBytes   = digestSize / byteSize
+	numBase    = 10
+)
 
 // String is the method to format the flag's value, part of the flag.Value interface.
 // The String method's output will be used in diagnostics.
-func (b *digestIndices) String() string {
+func (b *digestIndex) String() string {
 	return fmt.Sprint(*b)
 }
 
 // Set is the method to set the flag value, part of the flag.Value interface.
 // Set's argument is a string to be parsed to set the flag.
-func (b *digestIndices) Set(value string) error {
+func (b *digestIndex) Set(value string) error {
 	numString := strings.Split(value, "/")
 
 	if len(numString) < 2 {
@@ -28,7 +33,7 @@ func (b *digestIndices) Set(value string) error {
 	}
 
 	for i, num := range numString {
-		nInt, error := strconv.ParseUint(num, 10, 8)
+		nInt, error := strconv.ParseUint(num, numBase, byteSize)
 		if error != nil {
 			return error
 		}
