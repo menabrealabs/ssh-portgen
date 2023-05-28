@@ -40,7 +40,7 @@ go build -o ssh-portgen
 ```
 Or you can cross-compile for a different OS and/or architecture by setting the GOOS and GOARCH environment variables:
 ```
-env GOOS=linux GOARCH=amd64 go build main.go
+env GOOS=linux GOARCH=amd64 go build -o ssh-portgen
 ```
 ## Supported Platforms
 ### AIX
