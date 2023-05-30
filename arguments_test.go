@@ -4,23 +4,23 @@ import (
 	"testing"
 )
 
-func TestArgs_should_set_var_to_default_value(t *testing.T) {
-	var indices digestIndex
-	err := indices.Set("2/20")
+func TestMain_should_set_var_to_default_value(t *testing.T) {
+	var index digestIndex
+	err := index.Set("2/20")
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-func TestArgs_one_value_should_fail(t *testing.T) {
-	var indices digestIndex
-	err := indices.Set("2")
+func TestMain_one_value_should_fail(t *testing.T) {
+	var index digestIndex
+	err := index.Set("2")
 	if err == nil {
-		t.Errorf("Expected error on single value but got %s", indices.String())
+		t.Errorf("Expected error on single value but got %s", index.String())
 	}
 }
 
-func TestArgs_above_upper_bound_value_should_fail(t *testing.T) {
+func TestMain_above_upper_bound_value_should_fail(t *testing.T) {
 	var index digestIndex
 	err := index.Set("2/33")
 	if err == nil {
@@ -28,7 +28,7 @@ func TestArgs_above_upper_bound_value_should_fail(t *testing.T) {
 	}
 }
 
-func TestArgs_above_lower_bound_value_should_fail(t *testing.T) {
+func TestMain_above_lower_bound_value_should_fail(t *testing.T) {
 	var index digestIndex
 	err := index.Set("-1/33")
 	if err == nil {
