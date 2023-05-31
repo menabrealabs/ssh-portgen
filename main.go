@@ -17,8 +17,8 @@ var rawFlag bool
 var lowFlag bool
 
 func init() {
-	flag.Var(&indexFlag, "indices", "index of two bytes from the digest in the range 0..31, separated by a forward-slash: e.g. 2/20")
-	flag.Var(&indexFlag, "i", "shorthand for -indices flag")
+	flag.Var(&indexFlag, "index", "index of two bytes from the digest in the range 0..31, separated by a forward-slash: e.g. 2/20")
+	flag.Var(&indexFlag, "i", "shorthand for -index flag")
 	flag.BoolVar(&rawFlag, "raw", false, "raw output: set to true to print only the raw generated port number")
 	flag.BoolVar(&rawFlag, "r", false, "shorthand for -raw flag")
 	flag.BoolVar(&lowFlag, "low", false, "allow high (5 digit) port numbers")
