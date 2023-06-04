@@ -4,15 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
+
+	"menabrealabs.com/ssh-portgen/digest"
+	"menabrealabs.com/ssh-portgen/handlers"
 )
 
-const (
-	byteSize       = 0x0008                   // 8
-	digestBitSize  = 0x0100                   // 256
-	digestByteSize = digestBitSize / byteSize // 32
-)
-
-var indexFlag = digestIndex{2, 20}
+var indexFlag = digest.Index{2, 20}
 var rawFlag bool
 var lowFlag bool
 
@@ -29,12 +26,12 @@ func main() {
 
 	flag.Parse()
 
-	hostname, _ := getHostname(flag.Arg(0))
+	hostname, _ := handlers.GetHostname(flag.Arg(0))
 
-	digest, err := getDigest(hostname)
+	digest, err := handlers.GetDigest(hostname)
 	logFatal(err)
 
-	port, err := getPort(digest, indexFlag, lowFlag)
+	port, err := handlers.GetPort(digest, indexFlag, lowFlag)
 	logFatal(err)
 
 	// Print the output

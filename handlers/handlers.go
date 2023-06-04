@@ -1,14 +1,16 @@
-package main
+package handlers
 
 import (
 	"crypto/sha256"
 	"encoding/binary"
 	"errors"
 	"os"
+
+	"menabrealabs.com/ssh-portgen/digest"
 )
 
 // Get the hostname from the command line or from the current environment.
-func getHostname(arg string) (string, error) {
+func GetHostname(arg string) (string, error) {
 	if arg != "" {
 		return arg, nil
 	} else {
@@ -22,26 +24,22 @@ func getHostname(arg string) (string, error) {
 }
 
 // Get a Sha256 digest of the hostname.
-func getDigest(hostname string) ([]byte, error) {
-	if len(hostname) < 1 {
-		return nil, errors.New("hostname is empty")
+func GetDigest(hostname string) ([]byte, error) {
+	if hostname == "" {
+		return []byte{}, errors.New("hostname is empty")
 	}
 
-	b := sha256.New()
-	_, err := b.Write([]byte(hostname))
-	if err != nil {
-		return nil, errors.New("failed to generate SHA-256 digest")
-	}
-	return b.Sum(nil), nil
+	sum := sha256.Sum256([]byte(hostname))
+	return sum[:], nil
 }
 
 // Convert digest bytes into unsigned int and remove last digit.
-func getPort(digest []byte, idx digestIndex, low bool) (uint16, error) {
-	if len(digest) < digestByteSize {
+func GetPort(digest []byte, idx digest.Index, low bool) (uint16, error) {
+	if len(digest) < sha256.Size {
 		return 0, errors.New("the digest value is malformed with an insufficient number of bytes")
 	}
 
-	if idx[0] >= digestByteSize || idx[1] >= digestByteSize {
+	if idx[0] >= sha256.Size || idx[1] >= sha256.Size {
 		return 0, errors.New("digest index is out of range")
 	}
 
