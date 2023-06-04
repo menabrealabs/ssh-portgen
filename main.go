@@ -4,27 +4,39 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	"menabrealabs.com/ssh-portgen/digest"
 	"menabrealabs.com/ssh-portgen/handlers"
 )
 
-var indexFlag = digest.Index{2, 20}
-var rawFlag bool
-var lowFlag bool
+const version string = "v1.1.0"
+
+var (
+	indexFlag   = digest.Index{2, 20}
+	rawFlag     bool
+	lowFlag     bool
+	versionFlag bool
+)
 
 func init() {
-	flag.Var(&indexFlag, "index", "index of two bytes from the digest in the range 0..31, separated by a forward-slash: e.g. 2/20")
+	flag.Var(&indexFlag, "index", "index of two bytes from the digest in the range 0..31, separated by a forward-slash")
 	flag.Var(&indexFlag, "i", "shorthand for -index flag")
 	flag.BoolVar(&rawFlag, "raw", false, "raw output: set to true to print only the raw generated port number")
 	flag.BoolVar(&rawFlag, "r", false, "shorthand for -raw flag")
-	flag.BoolVar(&lowFlag, "low", false, "allow high (5 digit) port numbers")
-	flag.BoolVar(&lowFlag, "l", false, "shorthand for -high flag")
+	flag.BoolVar(&lowFlag, "low", false, "allow low (5 digit) port numbers")
+	flag.BoolVar(&lowFlag, "l", false, "shorthand for -low flag")
+	flag.BoolVar(&versionFlag, "version", false, "show the current version of ssh-portgen")
+	flag.BoolVar(&versionFlag, "v", false, "shorthand for -version flag")
 }
 
 func main() {
-
 	flag.Parse()
+
+	if versionFlag {
+		fmt.Println(version)
+		os.Exit(0)
+	}
 
 	hostname, _ := handlers.GetHostname(flag.Arg(0))
 
